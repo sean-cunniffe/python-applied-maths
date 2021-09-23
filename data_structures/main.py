@@ -1,5 +1,4 @@
 import random
-import sys
 
 
 def generate_set():
@@ -30,7 +29,7 @@ def intersection(local_sets: dict):
     return temp_set
 
 
-def main():
+def main2():
     print('Random Set Generator')
     a = generate_set()
     b = generate_set()
@@ -45,4 +44,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main2()
