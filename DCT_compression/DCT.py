@@ -51,7 +51,7 @@ class DCT(object):
         temp = 0
         if self.Q_level == 50:
             self.Q_Mat = np.copy(self.q50)
-        elif self.Q_level >= 1 and self.Q_level < 50:
+        elif 1 <= self.Q_level < 50:
             for r in range(self.N):
                 for c in range(self.N):
                     temp = int(self.q50[r][c] * (50 / self.Q_level))
@@ -59,7 +59,7 @@ class DCT(object):
                         self.Q_Mat[r][c] = 255
                     else:
                         self.Q_Mat[r][c] = temp
-        elif self.Q_level > 50 and self.Q_level <= 100:
+        elif 50 < self.Q_level <= 100:
             for r in range(self.N):
                 for c in range(self.N):
                     self.Q_Mat[r][c] = int(round(self.q50[r][c] * ((100 - float(self.Q_level)) / 50.0)))
