@@ -11,8 +11,8 @@ class D2GaborWavelet(object):
 
     def __init__(self, wave_length, orientation, phase, aspect_ratio, bandwidth, sze):
         self.lamda = wave_length
-        self.theta = orientation / (180 / math.pi)        #Convert to Rads
-        self.varphi = phase / (180 / math.pi)   #convert to Rads
+        self.theta = orientation / (180 / math.pi)  # Convert to Rads
+        self.varphi = phase / (180 / math.pi)  # convert to Rads
         self.upsi = aspect_ratio
         self.bandW = bandwidth
         self.kappa = (2 * math.pi) / self.lamda
@@ -36,7 +36,7 @@ class D2GaborWavelet(object):
         print("Sigma:\t\t\t%s" % ("{:10.5f}".format(self.sigma)))
 
     def CalculateSigma(self):
-        B = (1 / math.pi) * (0.588705011) * ((math.pow(2, self.bandW) + 1) / (math.pow(2, self.bandW) - 1))
+        B = (1 / math.pi) * 0.588705011 * ((math.pow(2, self.bandW) + 1) / (math.pow(2, self.bandW) - 1))
         self.sigma = B * self.lamda
         print("Sigma: %f\nBandwidth: %f" % (self.sigma, B))
         return self.sigma
@@ -46,21 +46,42 @@ class D2GaborWavelet(object):
         return data
 
     def RunGabor(self):
-        """
-            Use the code provided along with your notes, published papers and
-            references available on the internet to code the Gabor equation to
-            generate a 2D Gabor wavelet.  The data to construct the wavelet must
-            be stroed in the GaborGrid 2D array
-        :return:
-        """
+        gx = -self.gaussian
+        gy = -self.gaussian
+        count = 0
+        total = 0
+        ax = 0
+        dy = 0
+        x = -self.gaussian
+        y = -self.gaussian
+
+        for y in range(-int(self.gaussian), (int(self.gaussian) + 1), 1):
+            for x in range(-int(self.gaussian), (int(self.gaussian) + 1), 1):
+                X = gx * math.cos(self.theta) + gy * math.sin(self.theta)
+                Y = -gx * math.sin(self.theta) + gy * math.cos(self.theta)
+                self.GaborGrid[dy][ax] = (math.exp(
+                    -(math.pow(X, 2) + (math.pow(Y, 2) * math.pow(self.upsi, 2))) / (2 * math.pow(self.sigma, 2)))) * (
+                                             math.cos((self.kappa * X + self.varphi)))
+                total += self.GaborGrid[dy][ax]
+                count += 1
+                gx += 1
+                ax += 1
+            ax = 0
+            dy += 1
+            gy += 1
+            gx = -self.gaussian
+        mean = total / count
+        print("Wavelet generator")
+        print("Total %s Count %s Mean %s" % (total, count, mean))
+        print(self.GaborGrid)
 
     def GetNormGaborWavelet(self):
-        """
-            Use the code provided along with your notes and sources availalbe on the
-            internet to code normalise the GaborGrid 2darray.  The result should be stored
-            in the GaborNorGrid 2darray
-        :return: GaborNormGrid
-        """
+        min = self.GaborGrid.min()
+        max = self.GaborGrid.max()
+        for y in range(0, self.size, 1):
+            for x in range(0, self.size, 1):
+                temp = int((self.GaborGrid[y][x] - min) / (max - min) * 255)
+                self.GaborNormGrid[y][x] = temp
         return self.GaborNormGrid
 
     def ShowGrayScaleWavelet(self):
@@ -77,7 +98,8 @@ class D2GaborWavelet(object):
         ay.set_xlim([-self.size, self.size])
         ay.set_ylim([-1.2, 1.2])
         ay.set_title('Gabor Wavelet - 1D')
-        ay.plot(x, np.exp(-(np.power(x, 2) / (2 * np.power(self.sigma, 2)))) * np.cos(2 * np.pi * (x / self.lamda) + self.varphi))
+        ay.plot(x, np.exp(-(np.power(x, 2) / (2 * np.power(self.sigma, 2)))) * np.cos(
+            2 * np.pi * (x / self.lamda) + self.varphi))
         ax = fig.add_subplot(1, 2, 2)
         ax.set_title('Gabor Wavelet - 2D')
         plt.imshow(self.GaborGrid)
@@ -85,4 +107,3 @@ class D2GaborWavelet(object):
 
         plt.colorbar(orientation='vertical')
         plt.show()
-
