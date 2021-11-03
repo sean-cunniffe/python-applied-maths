@@ -37,9 +37,11 @@ class IntImage(object):
 
     def RII(self, rotation):
         # add the values of the row and update element value with current sum
+        start, stop, step = (0, len(self.IImage[0]), 1) if rotation is 45 else (len(self.IImage[0]) - 1, -1, -1)
         for i, col in enumerate(self.IImage):
             total = 0
-            for j, row_val in enumerate(col):
+            for j in range(start, stop, step):
+                row_val = col[j]
                 total += row_val
                 self.IImage[i][j] = total
 
@@ -74,8 +76,7 @@ class IntImage(object):
         c = self.IImage[s3[0]][s3[1]]
         a = self.IImage[s4[0]][s4[1]]
         print('%s+%s-%s-%s' % (d, a, b, c))
-        sum = d + a - b - c
-        return sum
+        return d + a - b - c
 
     def CalculateSum(self, x, y, w, h):
         d = self.IImage[x + w][y + h]
@@ -89,14 +90,16 @@ class IntImage(object):
 
 def main():
     # image = np.random.randint(255, size=(8, 8))
-    image = [[69, 34, 13, 168, 203, 193, 187, 49],
-             [246, 97, 99, 144, 207, 190, 206, 213],
-             [247, 61, 207, 147, 239, 84, 28, 233],
-             [102, 181, 38, 52, 72, 46, 122, 75],
-             [170, 185, 39, 112, 19, 241, 81, 8],
-             [169, 217, 201, 50, 1, 220, 115, 55],
-             [35, 214, 5, 7, 170, 163, 114, 123],
-             [31, 25, 191, 37, 66, 18, 202, 126]]
+
+    image = [[184, 166, 150, 9, 57, 205, 119, 185],
+             [14, 92, 42, 36, 174, 98, 115, 180],
+             [67, 120, 82, 138, 113, 124, 106, 115],
+             [134, 195, 1, 232, 111, 92, 28, 73],
+             [49, 142, 30, 101, 108, 100, 175, 127],
+             [123, 138, 13, 55, 146, 116, 170, 102],
+             [53, 118, 24, 183, 216, 11, 126, 1],
+             [137, 62, 115, 216, 55, 230, 7, 33]]
+
     # image = [[1, 2, 3, 4, 5],
     #          [6, 7, 8, 9, 10],
     #          [11, 12, 13, 14, 15],
@@ -118,9 +121,10 @@ def main():
     #         arr.append(np.random.randint(0, 255))
     #     image.append(arr)
 
-    ii1 = IntImage(len(image[0]), len(image), image, 45)
+    ii1 = IntImage(len(image[0]), len(image), image, 135)
     ii2 = ii1.IImage
     print(ii2)
+    # 2675
     sum = ii1.CalculateRotatedSum(5, 1, 3, 4)
     print(sum)
     plt.imshow(ii2)
