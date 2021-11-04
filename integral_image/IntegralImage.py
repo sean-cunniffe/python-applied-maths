@@ -71,16 +71,11 @@ class IntImage(object):
                 self.IImage[element_i][element_j] = total
 
     def CalculateRotatedSum(self, x, y, w, h, rotation):
-        flip = -len(self.IImage[0]) if rotation == 135 else 0
-        # TODO
-        s1 = (x + (w - 1) + flip, y + (w - 1))
-        s2 = (s1[0] + h + flip, s1[1] + h)
-        s3 = (s2[0] + w + flip, s2[1] - w)
-        s4 = (s3[0] - h + flip, s3[1] - h)
-        # s1 = (x + (w - 1), y + (w - 1))
-        # s2 = (s1[0] - h, s1[1] + h)
-        # s3 = (s2[0] - w, s2[1] - w)
-        # s4 = (s3[0] + h, s3[1] - h)
+        starting_point, w, h = (-1, w, h) if rotation == 45 else (1, -w, -h)
+        s1 = (x + (w + starting_point), y + (w + starting_point))
+        s2 = (s1[0] - h, s1[1] + h)
+        s3 = (s2[0] - w, s2[1] - w)
+        s4 = (s3[0] + h, s3[1] - h)
         b = self.IImage[s1[0]][s1[1]]
         d = self.IImage[s2[0]][s2[1]]
         c = self.IImage[s3[0]][s3[1]]
