@@ -46,31 +46,41 @@ class IntImage(object):
                 self.IImage[i][j] = total
 
         # start at top right and work way down column then across
-        for element_j in range(len(self.IImage[0]) - 1, 0, -1):
-            for element_i, col in enumerate(self.IImage):
+        start, stop, step = (len(self.IImage[0]) - 1, -1, -1) if rotation is 45 else (0, len(self.IImage[0]), 1)
+        j_direction = -1 if rotation == 45 else 1
+        for element_j in range(start, stop, step):
+            for element_i in range(len(self.IImage)):
                 temp_i_index = element_i
                 temp_j_index = element_j
                 total = 0
-                # diagonal values down and left
-                while temp_j_index >= 0 and temp_i_index < len(col):
+                # diagonal values down and j_direction
+                while len(self.IImage[0]) > temp_j_index >= 0 <= temp_i_index < len(self.IImage):
                     total += self.IImage[temp_i_index][temp_j_index]
                     temp_i_index += 1
-                    temp_j_index -= 1
+                    temp_j_index += j_direction
 
-                # diagonal values up and left
+                # diagonal values up and j_direction
+                # equal the original position but move to
+                # next position first as we already added the original position value
                 temp_i_index = element_i - 1
-                temp_j_index = element_j - 1
-                while temp_i_index >= 0 and temp_j_index >= 0:
+                temp_j_index = element_j + j_direction
+                while len(self.IImage[0]) > temp_j_index >= 0 <= temp_i_index < len(self.IImage):
                     total += self.IImage[temp_i_index][temp_j_index]
                     temp_i_index -= 1
-                    temp_j_index -= 1
+                    temp_j_index += j_direction
                 self.IImage[element_i][element_j] = total
 
-    def CalculateRotatedSum(self, x, y, w, h):
-        s1 = (x + (w - 1), y + (w - 1))
-        s2 = (s1[0] - h, s1[1] + h)
-        s3 = (s2[0] - w, s2[1] - w)
-        s4 = (s3[0] + h, s3[1] - h)
+    def CalculateRotatedSum(self, x, y, w, h, rotation):
+        flip = -len(self.IImage[0]) if rotation == 135 else 0
+        # TODO
+        s1 = (x + (w - 1) + flip, y + (w - 1))
+        s2 = (s1[0] + h + flip, s1[1] + h)
+        s3 = (s2[0] + w + flip, s2[1] - w)
+        s4 = (s3[0] - h + flip, s3[1] - h)
+        # s1 = (x + (w - 1), y + (w - 1))
+        # s2 = (s1[0] - h, s1[1] + h)
+        # s3 = (s2[0] - w, s2[1] - w)
+        # s4 = (s3[0] + h, s3[1] - h)
         b = self.IImage[s1[0]][s1[1]]
         d = self.IImage[s2[0]][s2[1]]
         c = self.IImage[s3[0]][s3[1]]
@@ -91,41 +101,38 @@ class IntImage(object):
 def main():
     # image = np.random.randint(255, size=(8, 8))
 
-    image = [[184, 166, 150, 9, 57, 205, 119, 185],
-             [14, 92, 42, 36, 174, 98, 115, 180],
-             [67, 120, 82, 138, 113, 124, 106, 115],
-             [134, 195, 1, 232, 111, 92, 28, 73],
-             [49, 142, 30, 101, 108, 100, 175, 127],
-             [123, 138, 13, 55, 146, 116, 170, 102],
-             [53, 118, 24, 183, 216, 11, 126, 1],
-             [137, 62, 115, 216, 55, 230, 7, 33]]
-
-    # image = [[1, 2, 3, 4, 5],
-    #          [6, 7, 8, 9, 10],
-    #          [11, 12, 13, 14, 15],
-    #          [16, 17, 18, 19, 20],
-    #          [21, 22, 23, 24, 25]]
-    # image = [[1,   2,  3,  4,  5,  6],
-    #          [7,   8,  9, 10, 11, 12],
-    #          [13, 14, 15, 16, 17, 18],
-    #          [19, 20, 21, 22, 23, 24],
-    #          [25, 26, 27, 28, 29, 30],
-    #          [31, 32, 33, 34, 35, 36]]
+    # image = [[184, 166, 150, 9, 57, 205, 119, 185],
+    #          [14, 92, 42, 36, 174, 98, 115, 180],
+    #          [67, 120, 82, 138, 113, 124, 106, 115],
+    #          [134, 195, 1, 232, 111, 92, 28, 73],
+    #          [49, 142, 30, 101, 108, 100, 175, 127],
+    #          [123, 138, 13, 55, 146, 116, 170, 102],
+    #          [53, 118, 24, 183, 216, 11, 126, 1],
+    #          [137, 62, 115, 216, 55, 230, 7, 33]]
+    image = [[185, 119, 205, 57, 9, 150, 166, 184],
+             [180, 115, 98, 174, 36, 42, 92, 14],
+             [115, 106, 124, 113, 138, 82, 120, 67],
+             [73, 28, 92, 111, 232, 1, 195, 134],
+             [127, 175, 100, 108, 101, 30, 142, 49],
+             [102, 170, 116, 146, 55, 13, 138, 123],
+             [1, 126, 11, 216, 183, 24, 118, 53],
+             [33, 7, 230, 55, 216, 115, 62, 137]]
 
     # Random 2D array with values from 0 255
-    # size = 30
+    # size = 10
     # image = []
     # for i in range(size):
     #     arr = []
     #     for j in range(size):
     #         arr.append(np.random.randint(0, 255))
     #     image.append(arr)
+    rotation = 135
 
-    ii1 = IntImage(len(image[0]), len(image), image, 135)
+    ii1 = IntImage(len(image[0]), len(image), image, rotation)
     ii2 = ii1.IImage
     print(ii2)
     # 2675
-    sum = ii1.CalculateRotatedSum(5, 1, 3, 4)
+    sum = ii1.CalculateRotatedSum(2, 1, 3, 4, rotation)
     print(sum)
     plt.imshow(ii2)
     plt.show()
